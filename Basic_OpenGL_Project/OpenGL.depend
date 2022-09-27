@@ -47,7 +47,7 @@
 	<GL/gl.h>
 	<GL/glu.h>
 
-1663928244 source:h:\university work\10th_semester\graphic_design_animation_lab\basic_opengl_project\main.cpp
+1664251608 source:h:\university work\10th_semester\graphic_design_animation_lab\basic_opengl_project\main.cpp
 	<iostream>
 	<fstream>
 	<cassert>

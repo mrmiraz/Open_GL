@@ -78,7 +78,7 @@ Point l(0, 0, 1);
 Point temp(0,0,0);
 double tempVal;
 int drawaxes;
-
+int  flag;
 
 void drawSphere(double radius, int slices, int stacks)
 {
@@ -395,6 +395,7 @@ void mouseListener(int button, int state, int x, int y){	//x, y is the x-y of th
 		case GLUT_LEFT_BUTTON:
 			if(state == GLUT_DOWN){		// 2 times?? in ONE click? -- solution is checking DOWN or UP
 				drawaxes=1-drawaxes;
+				flag = 1-flag;
 				//cout << "drawaxes value: " << drawaxes << endl;
 			}
 			break;
@@ -409,14 +410,48 @@ void mouseListener(int button, int state, int x, int y){	//x, y is the x-y of th
 	}
 }
 
+//draw solid fill circle
+void drawFillCircle(int radius, int segments){
+    int i;
+    Point points[100];
+    //glColor3f(0.7,0.7,0.7);
+    //generate points
+    for(i=0;i<=segments;i++)
+    {
+        points[i].x=radius*cos(((double)i/(double)segments)*2*pi);
+        points[i].y=radius*sin(((double)i/(double)segments)*2*pi);
+    }
+    //draw segments using generated points
+    for(i=0;i<segments;i++)
+    {
+        glBegin(GL_TRIANGLES);
+        {
+            glVertex3f(0,0,0);
+			glVertex3f(points[i].x,points[i].y,0);
+			glVertex3f(points[i+1].x,points[i+1].y,0);
+        }
+        glEnd();
+    }
+
+}
+
 //draw a Bangladesh National flag
 void drawBdFlag(){
     //wide:height = 10:6
-    //circle radius = two parts of wide
+    //circle radius = 2/10 parts of wide
     //circle center = middle of height and 9/20 of the width of the flag
     glTranslatef(150, -20, 0);
     int zoomVal = 20;
-    rad = 2; //Two parts of wide
+    rad = 2;
+
+    //circle shape of the flag
+    glTranslated(-4.5*zoomVal, 3*zoomVal, 0);
+    glColor3f(0.74, 0.13, 0.16);
+    drawFillCircle(rad*zoomVal,80);
+
+    //back to the centre
+    glTranslated(4.5*zoomVal, -3*zoomVal, 0);
+
     //quads shape of flag
     glBegin(GL_QUADS);
     glColor3f(0, 0.41, 0.31);
@@ -426,10 +461,7 @@ void drawBdFlag(){
     glVertex3f(0*zoomVal, 6*zoomVal, 0);
     glEnd();
 
-    //circle shape of the flag
-    glTranslated(-4.5*zoomVal, 3*zoomVal, 0);
-    glColor3f(0.74, 0.13, 0.16);
-    drawSphere(rad*zoomVal, 80, 1);
+    //drawSphere(rad*zoomVal, 80, 1);
 }
 
 void drawStripes(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, int nStrides){
@@ -480,7 +512,7 @@ void drawStripes(double x1, double y1, double x2, double y2, double x3, double y
 */
 void drawHome(){
 
-    glTranslated(150, -70, 0);
+    glTranslated(150, 0, 0);
 
     glBegin(GL_LINES);{
     glColor3f(1, 1,1);
@@ -598,9 +630,6 @@ void drawHome(){
         glVertex3f(0, 50, 0);
     }
     glEnd();
-
-
-
 }
 void display(){
 	//clear the display
@@ -635,8 +664,14 @@ void display(){
     glColor3f(0,1,0);
     drawSquare(25);
     */
-    drawBdFlag();
-    //drawHome();
+    if(flag == 1){
+        drawBdFlag();
+    }
+    else{
+        drawHome();
+    }
+
+    //
 
 	//ADD this line in the end --- if you use double buffer (i.e. GL_DOUBLE)
 	glutSwapBuffers();
@@ -653,6 +688,7 @@ void init(){
 	angle=0;
 	drawaxes=1;
 	rad = 50;
+	flag = 1;
 	//clear the screen
 	glClearColor(0,0,0,0);
 
